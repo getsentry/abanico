@@ -119,7 +119,11 @@ class ConsistentHashingRouter(BaseRouter):
         assert_gapless_hosts(self.cluster.hosts)
 
     def get_host_for_key(self, key):
-        rv = self._hash.get_node(key)
+        if isinstance(key, unicode):
+            k = key.encode('utf-8')
+        else:
+            k = str(key)
+        rv = self._hash.get_node(k)
         if rv is None:
             raise UnroutableCommand("Did not find a suitable " "host for the key.")
         return rv
